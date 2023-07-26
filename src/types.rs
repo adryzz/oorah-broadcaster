@@ -35,3 +35,24 @@ pub struct Topic {
 pub enum WebSocketEvent {
     NewNotification = 1,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NotificationPost {
+    pub topic: String,
+    pub content: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Notification {
+    /// Event of the notification
+    pub e: WebSocketEvent,
+    /// Topic of the notification
+    pub t: String,
+    /// Content of the notification
+    pub c: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NotifyResponse {
+    pub count: usize,
+}

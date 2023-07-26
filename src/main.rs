@@ -1,18 +1,20 @@
 mod api;
 mod types;
 
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use axum::{
     routing::{delete, get, post},
     Router,
 };
 use sqlx::{sqlite::SqlitePoolOptions, Pool, SqlitePool};
+use tokio::sync::broadcast::{self, Sender};
 use tower_http::trace::TraceLayer;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
+    tracing::info!("Starting oorah-broadcaster...");
 
     match run().await {
         Ok(_) => tracing::info!("Program exited successfully."),
@@ -32,6 +34,12 @@ async fn run() -> anyhow::Result<()> {
 
     init_db(&pool).await?;
 
+    tracing::info!("Database initialized.");
+
+    let (tx, _rx) = broadcast::channel(64);
+
+    let state = Arc::new(AppState { db: pool, tx });
+
     let app = Router::new()
         .route("/", get(|| async { "YES SIR OORAH" }))
         .route("/listen", get(api::ws_handler))
@@ -44,7 +52,9 @@ async fn run() -> anyhow::Result<()> {
         .route("/users/me", delete(api::delete_users_me))
         .route("/notify", post(api::post_notify))
         .layer(TraceLayer::new_for_http())
-        .with_state(pool);
+        .with_state(state);
+
+    tracing::info!("Server is up.");
 
     axum::Server::bind(&"0.0.0.0:3000".parse()?)
         .serve(app.into_make_service())
@@ -77,4 +87,10 @@ async fn init_db(pool: &SqlitePool) -> anyhow::Result<()> {
     .await?;
 
     Ok(())
+}
+
+#[derive(Debug, Clone)]
+pub struct AppState {
+    db: SqlitePool,
+    tx: Sender<String>,
 }
