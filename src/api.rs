@@ -119,8 +119,8 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppSta
     let mut recv = state.tx.subscribe();
 
     while let Ok(msg) = recv.recv().await {
-        socket.send(Message::Text(msg));
+        socket.send(Message::Text(msg)).await;
     }
 
-    socket.close();
+    let _ = socket.close().await;
 }
