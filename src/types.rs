@@ -19,16 +19,16 @@ pub enum AuthProvider {
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct User {
-    auth_provider: AuthProvider,
-    permission_level: PermissionLevel,
-    auth_id: String,
-    auth_username: String,
+    pub auth_provider: AuthProvider,
+    pub permission_level: PermissionLevel,
+    pub auth_id: String,
+    pub auth_username: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Topic {
-    id: String,
-    description: String,
+    pub id: String,
+    pub description: String,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]

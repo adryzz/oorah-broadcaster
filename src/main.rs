@@ -7,7 +7,7 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
-use sqlx::sqlite::SqlitePoolOptions;
+use sqlx::{sqlite::SqlitePoolOptions, Pool, SqlitePool};
 use tower_http::trace::TraceLayer;
 
 #[tokio::main]
@@ -30,6 +30,8 @@ async fn run() -> anyhow::Result<()> {
         .connect(&db_connection_str)
         .await?;
 
+    init_db(&pool).await?;
+
     let app = Router::new()
         .route("/", get(|| async { "YES SIR OORAH" }))
         .route("/listen", get(api::ws_handler))
@@ -47,5 +49,32 @@ async fn run() -> anyhow::Result<()> {
     axum::Server::bind(&"0.0.0.0:3000".parse()?)
         .serve(app.into_make_service())
         .await?;
+    Ok(())
+}
+
+async fn init_db(pool: &SqlitePool) -> anyhow::Result<()> {
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS topics (
+        id TEXT PRIMARY KEY,
+        description TEXT
+    )",
+    )
+    .execute(pool)
+    .await?;
+
+    // change primary key if incorrect
+
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS users (
+        auth_provider TEXT NOT NULL,
+        permission_level INTEGER NOT NULL,
+        auth_id TEXT,
+        auth_username TEXT NOT NULL PRIMARY KEY
+    );
+    ",
+    )
+    .execute(pool)
+    .await?;
+
     Ok(())
 }
