@@ -131,11 +131,26 @@ pub async fn get_users(
     }
 }
 
-pub async fn post_users(State(state): State<Arc<AppState>>) -> impl IntoResponse {}
+pub async fn post_users(
+    State(state): State<Arc<AppState>>,
+    Json(user): Json<User>,
+) -> Result<Json<User>, StatusCode> {
+    // TODO: AUTH
+    // TODO: api call
+    Err(StatusCode::INTERNAL_SERVER_ERROR)
+}
 
-pub async fn get_users_me(State(state): State<Arc<AppState>>) -> impl IntoResponse {}
+pub async fn get_users_me(State(state): State<Arc<AppState>>) -> Result<Json<User>, StatusCode> {
+    // TODO: AUTH
+    // TODO: api call
+    Err(StatusCode::INTERNAL_SERVER_ERROR)
+}
 
-pub async fn delete_users_me(State(state): State<Arc<AppState>>) -> impl IntoResponse {}
+pub async fn delete_users_me(State(state): State<Arc<AppState>>) -> Result<(), StatusCode> {
+    // TODO: AUTH
+    // TODO: api call
+    Err(StatusCode::INTERNAL_SERVER_ERROR)
+}
 
 #[axum_macros::debug_handler]
 pub async fn post_notify(
