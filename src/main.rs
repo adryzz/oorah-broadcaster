@@ -25,8 +25,9 @@ async fn main() {
 
 async fn run() -> anyhow::Result<()> {
     let db_connection_str =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_string());
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| ":memory:".to_string());
 
+    tracing::info!("Opening database at \"{}\"...", &db_connection_str);
     let pool = SqlitePoolOptions::new()
         .max_connections(5)
         .acquire_timeout(Duration::from_secs(3))
