@@ -29,7 +29,7 @@ pub struct User {
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Topic {
     pub id: String,
-    pub description: String,
+    pub description: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
