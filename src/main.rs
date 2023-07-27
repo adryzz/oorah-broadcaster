@@ -1,7 +1,8 @@
 mod api;
 mod types;
+mod utils;
 
-use std::{sync::Arc, time::Duration, net::SocketAddr};
+use std::{net::SocketAddr, sync::Arc, time::Duration};
 
 use axum::{
     routing::{delete, get, post},
