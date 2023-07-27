@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr, Default, sqlx::Type)]
+#[repr(u32)]
 pub enum PermissionLevel {
     /// No permissions
+    #[default]
     None = 0,
     /// Able to send broadcasts
     SendMessages = 1,
@@ -13,17 +15,24 @@ pub enum PermissionLevel {
     Owner = 3,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, sqlx::Type)]
+#[repr(u32)]
 pub enum AuthProvider {
+    #[serde(rename = "reddit")]
     Reddit,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct User {
+    #[serde(rename = "authProvider")]
     pub auth_provider: AuthProvider,
+    #[serde(rename = "permissionLevel")]
+    #[serde(default)]
     pub permission_level: PermissionLevel,
-    pub auth_id: String,
-    pub auth_username: String,
+    #[serde(rename = "authId")]
+    pub auth_id: Option<String>,
+    #[serde(rename = "authUsername")]
+    pub auth_username: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]

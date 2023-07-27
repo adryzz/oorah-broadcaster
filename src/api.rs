@@ -1,21 +1,21 @@
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
-        State,
+        Query, State,
     },
     http::StatusCode,
     response::IntoResponse,
     Json,
 };
-use futures_util::{TryStreamExt, StreamExt};
-use tokio::select;
+use futures_util::StreamExt;
 use std::{net::SocketAddr, sync::Arc};
+use tokio::select;
 
 //allows to extract the IP of connecting user
 use axum::extract::connect_info::ConnectInfo;
 
 use crate::{
-    types::{Notification, NotificationPost, NotifyResponse, Topic, WebSocketEvent},
+    types::{Notification, NotificationPost, NotifyResponse, Topic, User, WebSocketEvent},
     utils::is_valid_topic_id,
     AppState,
 };
@@ -99,7 +99,37 @@ pub async fn delete_topics(
     }
 }
 
-pub async fn get_users(State(state): State<Arc<AppState>>) -> impl IntoResponse {}
+pub async fn get_users(
+    State(state): State<Arc<AppState>>,
+    Query(u): Query<User>,
+) -> Result<Json<User>, StatusCode> {
+    // TODO: AUTHENTICATION
+    if let Some(s) = u.auth_id {
+        let user_or_err = sqlx::query_as::<_, User>("SELECT permission_level, auth_provider, auth_id, auth_username FROM users WHERE auth_id = $1")
+        .bind(s)
+        .fetch_one(&state.db)
+        .await;
+
+        match user_or_err {
+            Ok(user) => Ok(Json(user)),
+            Err(sqlx::Error::RowNotFound) => Err(StatusCode::NOT_FOUND),
+            Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    } else if let Some(s) = u.auth_username {
+        let user_or_err = sqlx::query_as::<_, User>("SELECT permission_level, auth_provider, auth_id, auth_username FROM users WHERE auth_username = $1")
+        .bind(s)
+        .fetch_one(&state.db)
+        .await;
+
+        match user_or_err {
+            Ok(user) => Ok(Json(user)),
+            Err(sqlx::Error::RowNotFound) => Err(StatusCode::NOT_FOUND),
+            Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    } else {
+        Err(StatusCode::BAD_REQUEST)
+    }
+}
 
 pub async fn post_users(State(state): State<Arc<AppState>>) -> impl IntoResponse {}
 

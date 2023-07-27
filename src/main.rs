@@ -79,8 +79,8 @@ async fn init_db(pool: &SqlitePool) -> anyhow::Result<()> {
         "CREATE TABLE IF NOT EXISTS users (
         auth_provider TEXT NOT NULL,
         permission_level INTEGER NOT NULL,
-        auth_id TEXT,
-        auth_username TEXT NOT NULL PRIMARY KEY
+        auth_id TEXT NOT NULL PRIMARY KEY,
+        auth_username TEXT
     );
     ",
     )
