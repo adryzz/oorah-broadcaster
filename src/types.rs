@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum PermissionLevel {
@@ -31,7 +32,8 @@ pub struct Topic {
     pub description: String,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
 pub enum WebSocketEvent {
     NewNotification = 1,
 }
