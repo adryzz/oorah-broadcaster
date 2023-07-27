@@ -56,9 +56,10 @@ async fn run() -> anyhow::Result<()> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    tracing::info!("Server is up.");
+    let listener = std::net::TcpListener::bind("0.0.0.0:3000")?;
+    tracing::info!("Listening on {}...", listener.local_addr()?);
 
-    axum::Server::bind(&"0.0.0.0:3000".parse()?)
+    axum::Server::from_tcp(listener)?
         .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await?;
     Ok(())
