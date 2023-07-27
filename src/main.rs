@@ -7,7 +7,7 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
-use sqlx::{sqlite::SqlitePoolOptions, Pool, SqlitePool};
+use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 use tokio::sync::broadcast::{self, Sender};
 use tower_http::trace::TraceLayer;
 
@@ -24,7 +24,7 @@ async fn main() {
 
 async fn run() -> anyhow::Result<()> {
     let db_connection_str =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite://memory:".to_string());
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_string());
 
     let pool = SqlitePoolOptions::new()
         .max_connections(5)

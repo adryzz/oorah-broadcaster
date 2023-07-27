@@ -7,7 +7,6 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use sqlx::{error::DatabaseError, SqlitePool};
 use std::{net::SocketAddr, sync::Arc};
 
 //allows to extract the IP of connecting user
@@ -90,7 +89,7 @@ pub async fn post_notify(
     let notif = Notification {
         e: WebSocketEvent::NewNotification,
         t: notification.topic,
-        c: notification.content
+        c: notification.content,
     };
 
     // pre-serialize ahead of time
@@ -103,7 +102,7 @@ pub async fn post_notify(
                 Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
             }
         }
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 
