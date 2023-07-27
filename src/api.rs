@@ -86,11 +86,11 @@ pub async fn post_notify(
         return Err(StatusCode::BAD_REQUEST);
     }
 
-    let notif = Notification {
+    let notif = vec![Notification {
         e: WebSocketEvent::NewNotification,
         t: notification.topic,
         c: notification.content,
-    };
+    }];
 
     // pre-serialize ahead of time
     match serde_json::to_string(&notif) {
