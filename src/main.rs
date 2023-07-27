@@ -1,7 +1,7 @@
 mod api;
 mod types;
 
-use std::{sync::Arc, time::Duration};
+use std::{sync::Arc, time::Duration, net::SocketAddr};
 
 use axum::{
     routing::{delete, get, post},
@@ -57,7 +57,7 @@ async fn run() -> anyhow::Result<()> {
     tracing::info!("Server is up.");
 
     axum::Server::bind(&"0.0.0.0:3000".parse()?)
-        .serve(app.into_make_service())
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await?;
     Ok(())
 }
