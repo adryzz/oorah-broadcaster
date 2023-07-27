@@ -7,6 +7,8 @@ use axum::{
     response::IntoResponse,
     Json,
 };
+use futures_util::{TryStreamExt, StreamExt};
+use tokio::select;
 use std::{net::SocketAddr, sync::Arc};
 
 //allows to extract the IP of connecting user
@@ -148,9 +150,24 @@ pub async fn ws_handler(
 async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
     let mut recv = state.tx.subscribe();
 
-    while let Ok(msg) = recv.recv().await {
-        socket.send(Message::Text(msg)).await;
-    }
+    // TODO: find a cleaner way to implement this
 
-    let _ = socket.close().await;
+    loop {
+        select! {
+            Ok(msg) = recv.recv() => {
+                if let Err(_) = socket.send(Message::Text(msg)).await {
+                    break;
+                }
+            }
+
+            msg = socket.next() => {
+                if let Some(Ok(_)) = msg {
+                    // we dont care
+                } else {
+                    // websocket closed
+                    break;
+                }
+            }
+        }
+    }
 }
