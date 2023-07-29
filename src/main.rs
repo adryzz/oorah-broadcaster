@@ -1,6 +1,9 @@
-mod api;
+mod notifications;
+mod topics;
 mod types;
+mod users;
 mod utils;
+mod websockets;
 
 use std::{net::SocketAddr, sync::Arc, time::Duration};
 
@@ -44,15 +47,15 @@ async fn run() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/", get(|| async { "YES SIR OORAH" }))
-        .route("/listen", get(api::ws_handler))
-        .route("/topics", get(api::get_topics))
-        .route("/topics", post(api::post_topics))
-        .route("/topics", delete(api::delete_topics))
-        .route("/users", get(api::get_users))
-        .route("/users", post(api::post_users))
-        .route("/users/me", get(api::get_users_me))
-        .route("/users/me", delete(api::delete_users_me))
-        .route("/notify", post(api::post_notify))
+        .route("/listen", get(websockets::ws_handler))
+        .route("/topics", get(topics::get_topics))
+        .route("/topics", post(topics::post_topics))
+        .route("/topics", delete(topics::delete_topics))
+        .route("/users", get(users::get_users))
+        .route("/users", post(users::post_users))
+        .route("/users/me", get(users::get_users_me))
+        .route("/users/me", delete(users::delete_users_me))
+        .route("/notify", post(notifications::post_notify))
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
