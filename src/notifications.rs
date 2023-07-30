@@ -28,7 +28,7 @@ pub async fn post_notify(
     // pre-serialize ahead of time
     match serde_json::to_string(&notif) {
         Ok(serialized) => {
-            let count_or_err = state.tx.send(serialized);
+            let count_or_err = state.tx.send(Arc::new(serialized));
 
             match count_or_err {
                 Ok(c) => Ok(Json(NotifyResponse { count: c })),

@@ -98,5 +98,5 @@ async fn init_db(pool: &SqlitePool) -> anyhow::Result<()> {
 #[derive(Debug, Clone)]
 pub struct AppState {
     db: SqlitePool,
-    tx: Sender<String>,
+    tx: Sender<Arc<String>>,
 }
