@@ -5,11 +5,13 @@ The original typescript version is [here](https://github.com/april83c/broadcaste
 
 ## Installation
 
-TBD
+You can grab the latest build artifacts of the CI pipeline [here](https://github.com/adryzz/oorah-broadcaster/actions).
 
 ## Usage
 
 Fully conforms to the [API of the original broadcaster](https://github.com/april83c/broadcaster/blob/main/API.md)
+
+By default the database is created in-memory, but you can specify a path in the `DATABASE_URL` environment variable to have the database be persistent
 
 ## Panel
 
