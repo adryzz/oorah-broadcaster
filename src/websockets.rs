@@ -6,6 +6,7 @@ use axum::{
     response::IntoResponse,
 };
 use futures_util::StreamExt;
+use tracing::instrument;
 use std::{net::SocketAddr, sync::Arc};
 use tokio::select;
 
@@ -22,6 +23,7 @@ pub async fn ws_handler(
     ws.on_upgrade(move |socket| handle_socket(socket, addr, state))
 }
 
+#[instrument(name = "websocket_connection")]
 async fn handle_socket(mut socket: WebSocket, who: SocketAddr, state: Arc<AppState>) {
     let mut recv = state.tx.subscribe();
 

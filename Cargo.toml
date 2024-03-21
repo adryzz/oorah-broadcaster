@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.72"
-axum = { version = "0.6.19", features = ["tracing", "ws"] }
+axum = { version = "0.7", features = ["tracing", "ws"] }
 axum-macros = "0.3.8"
 console-subscriber = "0.1.10"
 futures-util = "0.3.28"
@@ -16,6 +16,6 @@ serde_json = "1.0.104"
 serde_repr = "0.1.16"
 sqlx = { version = "0.7.1", features = ["sqlite", "runtime-tokio-rustls"] }
 tokio = { version = "1.29.1", features = ["full", "tracing"] }
-tower-http = { version = "0.4.3", features = ["trace"] }
+tower-http = { version = "0.5.2", features = ["trace"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.17"
