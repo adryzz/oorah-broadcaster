@@ -17,11 +17,8 @@ use tower_http::trace::TraceLayer;
 
 #[tokio::main]
 async fn main() {
-    if std::env::var("TOKIO_CONSOLE").ok().is_some() {
-        console_subscriber::init();
-    } else {
-        tracing_subscriber::fmt::init();
-    }
+    // TODO: add console_subscriber support back in
+    tracing_subscriber::fmt::init();
     tracing::info!("Starting oorah-broadcaster...");
 
     match run().await {
